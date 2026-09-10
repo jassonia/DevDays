@@ -229,13 +229,17 @@ test.describe('Accessibility Tests', () => {
     await expect(page.locator('html')).not.toHaveClass(/high-contrast/);
 
     await test.step('Enable high contrast mode', async () => {
-      await contrastToggle.click();
+      await contrastToggle.focus();
+      await page.keyboard.press('Space');
       await expect(page.locator('html')).toHaveClass(/high-contrast/);
       await expect(contrastToggle).toHaveText('Disable high contrast');
       await expect(contrastToggle).toHaveAttribute('aria-pressed', 'true');
     });
 
-    await test.step('Verify the preference survives a reload', async () => {
+    await test.step('Verify the preference survives navigation and a reload', async () => {
+      await page.goto('/about');
+      await expect(page.locator('html')).toHaveClass(/high-contrast/);
+      await expect(page.getByTestId('contrast-toggle')).toHaveAttribute('aria-pressed', 'true');
       await page.reload();
       await expect(page.locator('html')).toHaveClass(/high-contrast/);
       await expect(page.getByTestId('contrast-toggle')).toHaveText('Disable high contrast');
