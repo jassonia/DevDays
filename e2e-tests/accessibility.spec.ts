@@ -220,4 +220,36 @@ test.describe('Accessibility Tests', () => {
       await expect(gameCardSvgs.nth(i)).toHaveAttribute('aria-hidden', 'true');
     }
   });
+
+  test('high contrast mode should persist across page reloads', async ({ page }) => {
+    await page.goto('/');
+
+    const contrastToggle = page.getByTestId('contrast-toggle');
+    await expect(contrastToggle).toHaveText('Enable high contrast');
+    await expect(page.locator('html')).not.toHaveClass(/high-contrast/);
+
+    await test.step('Enable high contrast mode', async () => {
+      await contrastToggle.focus();
+      await page.keyboard.press('Space');
+      await expect(page.locator('html')).toHaveClass(/high-contrast/);
+      await expect(contrastToggle).toHaveText('Disable high contrast');
+      await expect(contrastToggle).toHaveAttribute('aria-pressed', 'true');
+    });
+
+    await test.step('Verify the preference survives navigation and a reload', async () => {
+      await page.goto('/about');
+      await expect(page.locator('html')).toHaveClass(/high-contrast/);
+      await expect(page.getByTestId('contrast-toggle')).toHaveAttribute('aria-pressed', 'true');
+      await page.reload();
+      await expect(page.locator('html')).toHaveClass(/high-contrast/);
+      await expect(page.getByTestId('contrast-toggle')).toHaveText('Disable high contrast');
+      await expect(page.getByTestId('contrast-toggle')).toHaveAttribute('aria-pressed', 'true');
+    });
+
+    await test.step('Disable high contrast mode', async () => {
+      await page.getByTestId('contrast-toggle').click();
+      await expect(page.locator('html')).not.toHaveClass(/high-contrast/);
+      await expect(page.getByTestId('contrast-toggle')).toHaveText('Enable high contrast');
+    });
+  });
 });
