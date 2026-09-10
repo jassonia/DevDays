@@ -83,6 +83,8 @@ This is a crowdfunding platform for games with a developer theme. The applicatio
 
 > [!NOTE]
 > TypeScript 7 (`tsgo`) is adopted **side-by-side** for type checking only; it does not affect linting. ESLint + `typescript-eslint` and `astro check` still resolve the classic `typescript` package (kept at v6) because the native compiler's API isn't ready for them yet. Do **not** bump the classic `typescript` package to 7 (a Dependabot `ignore` holds it) until `typescript-eslint` + `@astrojs/check` support the native API. `tsgo` is `--noEmit` only; the site is still built by `astro build`.
+- Every exported function should have a TSDoc comment describing its purpose, parameters, and return value.
+- Before imports or any code, add a comment block to the file that explains its purpose.
 
 ## Repository Structure
 
